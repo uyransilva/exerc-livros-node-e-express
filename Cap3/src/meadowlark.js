@@ -1,23 +1,24 @@
-const express = require('express');//importa o express
-const app = express();//torna a função express utilizavel toda vez
-                    //que se utilizar a expressao app
+const express = require('express')
+const expressHandlebars = require('express-handlebars')
+const app = express()
 
-const port = process.env.port || 3000;
+// configura o view engine Handlebars
+app.engine('handlebars', expressHandlebars({
+defaultLayout: 'main',
+}))
+app.set('view engine', 'handlebars')
 
-app.get('/', (req, res) => {//entre '' é o endereco de rota. req de requisicao 
-                            // do cliente e res de resposta do servidor
-    res.type('text/plain');
-    res.send('Meadowlark Travel');
-})
+app.get('/', (req, res) => res.render('home'))
 
-app.get('/about', (req, res) => {
-    res.type('text/plain');
-    res.send('About Meadowlark Travel');
-})
-
+app.get('/about', (req, res) => res.render('about'))
+// página 404 personalizada
 app.use((req, res) => {
-    res.type('text/plain');
-    res.status(404);
-    res.send('404-Not Found')
-});
-
+res.status(404)
+res.render('404')
+})
+// página 500 personalizada
+app.use((err, req, res, next) => {
+console.error(err.message)
+res.status(500)
+res.render('500')
+})
